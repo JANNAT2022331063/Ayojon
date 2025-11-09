@@ -84,47 +84,40 @@
       <img src="images/qr-code.png" alt="QR Code">
     </div>
 
-    <div class="ticket-details" id="ticketDetails">
+    <div class="ticket-details">
       <p><strong>Event:</strong> Loading...</p>
       <p><strong>Date:</strong> ...</p>
       <p><strong>Time:</strong> ...</p>
-      <p><strong>Payment Method:</strong> ...</p>
-      <p><strong>Mobile:</strong> ...</p>
-      <p><strong>TrxID:</strong> ...</p>
+      <p><strong>Location:</strong> ...</p>
+      <p><strong>Price:</strong> ...</p>
+      <p><strong>Attendee:</strong> ...</p>
       <p><strong>Ticket ID:</strong> ...</p>
     </div>
 
     <button class="download-btn" onclick="window.print()">Download / Print Ticket</button>
   </div>
 
+  <!-- ✅ Your added script -->
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const eventId = params.get('eventId');
-    const mobile = params.get('mobile');
-    const trxid = params.get('trxid');
-    const method = params.get('method');
-    const ticketId = 'TCK' + Math.floor(Math.random() * 1000000);
+    document.addEventListener("DOMContentLoaded", () => {
+      const event = JSON.parse(localStorage.getItem("selectedEventData"));
 
-    async function loadTicket() {
-      try {
-        const res = await fetch(`http://localhost:5000/api/events/${eventId}`);
-        const event = await res.json();
-
-        document.getElementById('ticketDetails').innerHTML = `
-          <p><strong>Event:</strong> ${event.title}</p>
-          <p><strong>Date:</strong> ${event.date}</p>
-          <p><strong>Time:</strong> ${event.time}</p>
-          <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
-          <p><strong>Mobile:</strong> ${mobile}</p>
-          <p><strong>TrxID:</strong> ${trxid}</p>
-          <p><strong>Ticket ID:</strong> #${ticketId}</p>
-        `;
-      } catch {
-        document.getElementById('ticketDetails').innerHTML = '<p>Failed to load ticket details.</p>';
+      if (!event) {
+        alert("No ticket data found!");
+        window.location.href = "Events.html";
+        return;
       }
-    }
 
-    loadTicket();
+      document.querySelector(".ticket-details").innerHTML = `
+        <p><strong>Event:</strong> ${event.title}</p>
+        <p><strong>Date:</strong> ${event.date} | <strong>Time:</strong> ${event.time}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p><strong>Price:</strong> ${event.price} BDT</p>
+        <p><strong>Attendee:</strong> (Your name here)</p>
+        <p><strong>Ticket ID:</strong> #${Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+      `;
+    });
   </script>
+
 </body>
 </html>
