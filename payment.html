@@ -114,14 +114,47 @@
     </div>
 
     <div class="order-summary">
-      <div><span>Event Ticket:</span><span>550.00</span></div>
+      <div><span>Event Ticket:</span><span class="ticket-price">550.00</span></div>
       <div><span>Service Fee:</span><span>25.00</span></div>
       <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 8px 0;">
-      <div><strong>Total:</strong><strong>575.00</strong></div>
+      <div><strong>Total:</strong><strong class="total-price">575.00</strong></div>
     </div>
 
-   <button class="confirm-btn" onclick="window.location.href='payment-method.html'">Confirm & Pay</button>
-
+    <button class="confirm-btn" onclick="window.location.href='payment-method.html'">Confirm & Pay</button>
   </div>
+
+  <!-- ✅ Added your script here -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const eventId = localStorage.getItem("selectedEventId");
+      if (!eventId) {
+        alert("No event selected!");
+        window.location.href = "Events.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${eventId}`);
+        const event = await res.json();
+
+        // ✅ Change header text
+        document.querySelector("h2").textContent = `Pay for ${event.title}`;
+
+        // ✅ Update the event ticket price
+        document.querySelector(".ticket-price").textContent = event.price + " BDT";
+
+        // ✅ Total price = ticket price + 25 fee
+        const total = Number(event.price) + 25;
+        document.querySelector(".total-price").textContent = total + " BDT";
+
+        // ✅ Save event data for the next page (ticket page, etc)
+        localStorage.setItem("selectedEventData", JSON.stringify(event));
+
+      } catch (err) {
+        alert("Failed to load event details");
+      }
+    });
+  </script>
+
 </body>
 </html>
