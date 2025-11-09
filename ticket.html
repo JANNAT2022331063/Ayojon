@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Digital Ticket</title>
+  <title>Your Digital Ticket | Ayojon</title>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -17,30 +17,22 @@
 
     .ticket-container {
       background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
       width: 800px;
-      padding: 100px 90px;
-      color: #380101;
+      padding: 80px 70px;
+      color: #222;
       text-align: center;
     }
 
     .ticket-container h2 {
-      font-size: 4rem;
-      margin-bottom: 5px;
-    }
-
-    .ticket-container p.subtitle {
-      font-size: 1.5rem;
-      opacity: 0.85;
-      margin-bottom: 25px;
+      font-size: 3rem;
+      margin-bottom: 10px;
     }
 
     .qr-box {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.3);
       padding: 15px;
       border-radius: 12px;
       display: inline-block;
@@ -48,8 +40,8 @@
     }
 
     .qr-box img {
-      width: 250px;
-      height: 250px;
+      width: 200px;
+      height: 200px;
       border-radius: 10px;
       background: #fff;
       padding: 10px;
@@ -57,16 +49,12 @@
 
     .ticket-details {
       text-align: left;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.25);
       border-radius: 10px;
       padding: 15px;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       line-height: 1.6;
       margin-top: 10px;
-    }
-
-    .ticket-details p {
-      margin: 6px 0;
     }
 
     .download-btn {
@@ -77,7 +65,7 @@
       padding: 12px 0;
       width: 100%;
       color: #fff;
-      font-size: 1rem;
+      font-size: 1.2rem;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -90,18 +78,53 @@
 <body>
   <div class="ticket-container">
     <h2>Your Digital Ticket</h2>
-    <p class="subtitle">Scan for Smooth Entry</p>
+    <p class="subtitle">🎉 Thank you for booking with Ayojon!</p>
 
     <div class="qr-box">
-      <!-- Replace this image with your QR code -->
       <img src="images/qr-code.png" alt="QR Code">
     </div>
 
-    <div class="ticket-details">
-      <p><strong>Event:</strong> University TechFest 2025</p>
-      <p><strong>Date:</strong> October 25, 2025 &nbsp; | &nbsp; <strong>Time:</strong> 6:00 PM</p>
-      <p><strong>Attendee:</strong> Alex Johnson</p>
-      <p><strong>Ticket ID:</strong> #A9C4X8</p>
+    <div class="ticket-details" id="ticketDetails">
+      <p><strong>Event:</strong> Loading...</p>
+      <p><strong>Date:</strong> ...</p>
+      <p><strong>Time:</strong> ...</p>
+      <p><strong>Payment Method:</strong> ...</p>
+      <p><strong>Mobile:</strong> ...</p>
+      <p><strong>TrxID:</strong> ...</p>
+      <p><strong>Ticket ID:</strong> ...</p>
     </div>
 
-    <button class="download-btn" onclick="window.print()">Download / Print Ticket</button
+    <button class="download-btn" onclick="window.print()">Download / Print Ticket</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get('eventId');
+    const mobile = params.get('mobile');
+    const trxid = params.get('trxid');
+    const method = params.get('method');
+    const ticketId = 'TCK' + Math.floor(Math.random() * 1000000);
+
+    async function loadTicket() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${eventId}`);
+        const event = await res.json();
+
+        document.getElementById('ticketDetails').innerHTML = `
+          <p><strong>Event:</strong> ${event.title}</p>
+          <p><strong>Date:</strong> ${event.date}</p>
+          <p><strong>Time:</strong> ${event.time}</p>
+          <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
+          <p><strong>Mobile:</strong> ${mobile}</p>
+          <p><strong>TrxID:</strong> ${trxid}</p>
+          <p><strong>Ticket ID:</strong> #${ticketId}</p>
+        `;
+      } catch {
+        document.getElementById('ticketDetails').innerHTML = '<p>Failed to load ticket details.</p>';
+      }
+    }
+
+    loadTicket();
+  </script>
+</body>
+</html>
