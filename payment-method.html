@@ -17,26 +17,24 @@
 
     .payment-container {
       background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
       backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
       width: 600px;
-      padding: 120px;
+      padding: 60px;
       color: #050000;
       text-align: center;
     }
 
     .payment-container h2 {
-      font-size: 3rem;
-      margin-bottom: 5px;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
     }
 
     .payment-container p {
       font-size: 1rem;
       margin-bottom: 25px;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     .method-choice {
@@ -51,22 +49,21 @@
       background: rgba(255, 255, 255, 0.15);
       border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
-      padding: 25px 10px;
+      padding: 20px;
       cursor: pointer;
       transition: 0.3s;
       text-align: center;
-      color: #0d0000;
+      color: #000;
     }
 
     .method-btn:hover, .method-btn.active {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.35);
     }
 
     .method-btn img {
-      width: 79px;
-      height: 79px;
-      display: block;
-      margin: 0 auto 8px;
+      width: 70px;
+      height: 70px;
+      margin-bottom: 10px;
     }
 
     .input-box {
@@ -75,8 +72,8 @@
     }
 
     .input-box label {
-      font-size:1.5rem;
-      opacity: 0.85;
+      font-size: 1.2rem;
+      opacity: 0.9;
     }
 
     .input-box input {
@@ -85,9 +82,9 @@
       margin-top: 5px;
       border: none;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.25);
+      color: #000;
+      font-size: 1.2rem;
       outline: none;
     }
 
@@ -99,7 +96,7 @@
       padding: 12px 0;
       width: 100%;
       color: #fff;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -108,23 +105,24 @@
       opacity: 0.9;
     }
 
-    a.back-link {
-      display: block;
-      margin-top: 15px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    a.back-link:hover {
-      text-decoration: underline;
+    .event-summary {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
   <div class="payment-container">
-    <h2>Select Payment Method</h2>
-    <p>Choose a service to complete your payment</p>
+    <h2>Payment Method</h2>
+    <p>Confirm your payment to complete booking</p>
+
+    <div class="event-summary" id="eventSummary">
+      <p><strong>Event:</strong> Loading...</p>
+      <p><strong>Price:</strong> ... BDT</p>
+    </div>
 
     <div class="method-choice">
       <div class="method-btn" id="bkash">
@@ -137,27 +135,26 @@
       </div>
     </div>
 
-    <form id="paymentForm" onsubmit="return confirmPayment()">
+    <form id="paymentForm">
       <div class="input-box">
         <label for="mobile">Mobile Number</label>
-        <input type="text" id="mobile" name="mobile" placeholder="e.g. 01XXXXXXXXX" required>
+        <input type="text" id="mobile" name="mobile" placeholder="01XXXXXXXXX" required>
       </div>
 
       <div class="input-box">
         <label for="trxid">Transaction ID</label>
-        <input type="text" id="trxid" name="trxid" placeholder="Enter your TrxID" required>
+        <input type="text" id="trxid" name="trxid" placeholder="Enter TrxID" required>
       </div>
 
       <button type="submit" class="confirm-btn">Confirm Payment</button>
     </form>
-
-    <a href="payment.html" class="back-link">← Back to Summary</a>
   </div>
 
   <script>
     const methodBtns = document.querySelectorAll('.method-btn');
     let selectedMethod = '';
 
+    // Select payment method
     methodBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         methodBtns.forEach(b => b.classList.remove('active'));
@@ -166,21 +163,47 @@
       });
     });
 
-    function confirmPayment() {
-      if (!selectedMethod) {
-        alert('Please select a payment method (bKash or Nagad).');
-        return false;
+    // Extract event details from query
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventId');
+
+    async function loadEventDetails() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/events/${eventId}`);
+        const event = await res.json();
+        document.getElementById('eventSummary').innerHTML = `
+          <p><strong>Event:</strong> ${event.title}</p>
+          <p><strong>Price:</strong> ${event.price} BDT</p>
+        `;
+      } catch {
+        document.getElementById('eventSummary').innerHTML = '<p>Failed to load event details.</p>';
       }
+    }
+
+    loadEventDetails();
+
+    // Confirm payment and redirect to ticket page
+    document.getElementById('paymentForm').addEventListener('submit', e => {
+      e.preventDefault();
+
       const mobile = document.getElementById('mobile').value.trim();
       const trxid = document.getElementById('trxid').value.trim();
 
-      if (mobile && trxid) {
-        alert(`✅ Payment Submitted via ${selectedMethod.toUpperCase()}\nMobile: ${mobile}\nTrxID: ${trxid}`);
-        // Optionally redirect to a success page:
-        // window.location.href = "success.html";
+      if (!selectedMethod) {
+        alert('Please select a payment method.');
+        return;
       }
-      return false; // Prevent actual form submission
-    }
+
+      const paymentData = {
+        eventId,
+        mobile,
+        trxid,
+        method: selectedMethod
+      };
+
+      const params = new URLSearchParams(paymentData).toString();
+      window.location.href = `ticket.html?${params}`;
+    });
   </script>
 </body>
 </html>
