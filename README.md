@@ -19,8 +19,6 @@
 
 - **XAMPP** (or similar) for MySQL database
 - **Node.js** and npm installed
-- Gmail account for email notifications (optional for testing)
-
 ## 🚀 Setup Instructions
 
 ### 1. Database Setup
