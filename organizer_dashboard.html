@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Organizer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html" class="logo-link">
+            <img src="images/logo.png" alt="Ayojon Logo" class="logo-img">
+        </a>
+        <ul>
+            <li onclick="showSection('dashboard')">Dashboard</li>
+            <li onclick="document.getElementById('createModal').style.display='flex'">Create Event</li>
+            <li onclick="showSection('profile')">Profile</li>
+            <li onclick="showSection('admins')">Admin Panel</li>
+            <li onclick="logout()">Logout</li>
+        </ul>
+    </nav>
+
+    <div class="container" id="dashboard-sec">
+        <h1 style="margin-bottom: 20px;">My Events Dashboard</h1>
+        <div id="org-grid" class="grid"></div>
+    </div>
+
+
+    <div class="container hidden" id="profile-sec">
+        <h1 style="text-align: center; margin-bottom: 20px;">Organization Profile</h1>
+        <div class="profile-card" id="profile-content">
+        </div>
+    </div>
+
+    <div class="container hidden" id="admins-sec">
+        <h1 style="text-align: center; margin-bottom: 30px; color: #10b981;"><i class="fas fa-user-shield"></i> Ayojon
+            Admins</h1>
+        <div id="admin-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 10px; align-items: start;">
+            <!-- Cards populated by JS -->
+        </div>
+    </div>
+
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('createModal').style.display='none'">&times;</span>
+            <h2>Create New Event</h2>
+            <form id="eventForm">
+                <input id="e_title" placeholder="Event Title" required>
+                <textarea id="e_desc" placeholder="Description" rows="3"
+                    style="width:100%; border:1px solid #ddd; border-radius:5px; padding:5px;"></textarea>
+                <input id="e_loc" placeholder="Location" required>
+                <label>Date & Time</label>
+                <div style="display:flex; gap:10px;">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-calendar-alt" onclick="this.nextElementSibling.showPicker()"></i>
+                        <input type="date" id="e_date" required>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-clock" onclick="this.nextElementSibling.showPicker()"></i>
+                        <input type="time" id="e_time" required>
+                    </div>
+                </div>
+                <label>Reg Deadline</label>
+                <div class="input-icon-wrapper">
+                    <i class="fas fa-calendar-check" onclick="this.nextElementSibling.showPicker()"></i>
+                    <input type="date" id="e_dead" required>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="e_price" placeholder="Price" required>
+                    <input type="number" id="e_charge" placeholder="Service Charge" required>
+                </div>
+                <input type="number" id="e_seats" placeholder="Total Seats" required>
+                <input id="e_contact" placeholder="Contact Number">
+                <input id="e_social" placeholder="Event Social Media Link (Optional)">
+
+                <button class="btn btn-primary" style="width:100%">Publish Event</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="userListModal" class="modal">
+        <div class="modal-content" style="max-width:950px;">
+            <span class="close" onclick="document.getElementById('userListModal').style.display='none'">&times;</span>
+            <h2 style="display: flex; align-items: center; gap: 15px;">
+                Booked Users
+                <button class="btn btn-primary"
+                    style="font-size: 0.75rem; padding: 0.5rem 1.25rem; border-radius: 50px;" onclick="downloadCSV()">
+                    Download Excel
+                </button>
+            </h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>phone</th>
+                        <th>QTY</th>
+                        <th>PAID</th>
+                        <th>About user</th>
+                        <th>status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
+            <h2>✏️ Edit Event</h2>
+            <form id="editEventForm">
+                <input type="hidden" id="edit_event_id">
+                <input id="edit_title" placeholder="Event Title" required>
+                <textarea id="edit_desc" placeholder="Description" rows="3"
+                    style="width:100%; border:1px solid #ddd; border-radius:5px; padding:5px;"></textarea>
+                <input id="edit_loc" placeholder="Location" required>
+                <label>Date & Time</label>
+                <div style="display:flex; gap:10px;">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-calendar-alt" onclick="this.nextElementSibling.showPicker()"></i>
+                        <input type="date" id="edit_date" required>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-clock" onclick="this.nextElementSibling.showPicker()"></i>
+                        <input type="time" id="edit_time" required>
+                    </div>
+                </div>
+                <label>Reg Deadline</label>
+                <div class="input-icon-wrapper">
+                    <i class="fas fa-calendar-check" onclick="this.nextElementSibling.showPicker()"></i>
+                    <input type="date" id="edit_dead" required>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="edit_price" placeholder="Price" required>
+                    <input type="number" id="edit_charge" placeholder="Service Charge" required>
+                </div>
+                <input type="number" id="edit_seats" placeholder="Total Seats" required>
+                <input id="edit_contact" placeholder="Contact Number">
+                <input id="edit_social" placeholder="Event Social Media Link (Optional)">
+                <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 10px;">
+                    ⚠️ <strong>Note:</strong> All booked users will be notified via email and SMS about any changes.
+                </p>
+                <button type="submit" class="btn btn-primary" style="width:100%">💾 Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingDetailsModal" class="modal">
+        <div class="modal-content" style="max-width:500px;">
+            <span class="close"
+                onclick="document.getElementById('bookingDetailsModal').style.display='none'">&times;</span>
+            <h2 id="modalEventTitle" style="color: #10b981; margin-bottom: 20px;">Booking Details</h2>
+
+            <div id="bookingDetailsContent" class="detail-grid" style="grid-template-columns: 1fr; gap: 8px;">
+                <!-- Dynamic Content -->
+            </div>
+
+            <div id="modalActionButtons" style="display: flex; gap: 10px; margin-top: 20px;">
+                <!-- Dynamic Buttons -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const org = JSON.parse(localStorage.getItem('user'));
+        if (!org) window.location.href = 'index.html';
+        const API = 'http://localhost:5000';
+        let currentUsers = [];
+
+        function showSection(section) {
+            document.getElementById('dashboard-sec').classList.toggle('hidden', section !== 'dashboard');
+            document.getElementById('profile-sec').classList.toggle('hidden', section !== 'profile');
+            document.getElementById('admins-sec').classList.toggle('hidden', section !== 'admins');
+
+            if (section === 'dashboard') loadMyEvents();
+            if (section === 'profile') loadProfile();
+            if (section === 'admins') loadAdminList();
+        }
+
+        async function loadMyEvents() {
+            try {
+                // Force reload logic to ensure new events appear
+                const res = await fetch(API + `/my-events/${org.id}`);
+                const events = await res.json();
+                document.getElementById('org-grid').innerHTML = events.map(e => `
+                    <div class="card">
+                        <div class="card-body">
+                            <h3>${e.title}</h3>
+                            <p>Date: ${new Date(e.event_date).toLocaleDateString()}</p>
+                            <p>Time: ${e.start_time || 'TBD'}</p>
+                            <p>Seats: ${e.remaining_seats} / ${e.total_seats}</p>
+                            <p>Price: ${e.ticket_price} BDT</p>
+                            ${e.social_link ? `<p><strong>Link:</strong> <a href="${e.social_link.startsWith('http') ? e.social_link : 'https://' + e.social_link}" target="_blank" style="color: #60a5fa; text-decoration: underline;">Event Page</a></p>` : ''}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="editEvent(${e.id}, '${encodeURIComponent(JSON.stringify(e))}')">✏️ Edit</button>
+                            <button class="btn btn-primary" onclick="viewUsers(${e.id})">User List</button>
+                            <button class="btn btn-danger" onclick="deleteEvent(${e.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+                if (events.length === 0) document.getElementById('org-grid').innerHTML = '<p>No events created yet.</p>';
+            } catch (e) { console.log(e); }
+        }
+
+        function loadProfile() {
+            const logoSrc = org.org_logo ? org.org_logo : 'https://via.placeholder.com/100';
+            const profilePicSrc = (org.profile_pic && org.profile_pic.startsWith('data:image'))
+                ? org.profile_pic
+                : 'https://via.placeholder.com/100';
+
+            const html = `
+                <div style="padding: 20px; background: #0f172a; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    
+                    <!-- Top Section: Identity -->
+                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 40px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div style="text-align: center;">
+                            <div class="profile-pic-container" style="width: 100px; height: 100px; margin-bottom: 10px;">
+                                <img src="${logoSrc}" class="profile-pic-lg" style="width: 100px; height: 100px; border-color: #10b981;" alt="Org Logo">
+                                <div class="camera-overlay">
+                                    <i class="fas fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="uploadLogo(this)" style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+                            <span style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Org Logo</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="profile-pic-container" style="width: 100px; height: 100px; margin-bottom: 10px;">
+                                <img src="${profilePicSrc}" class="profile-pic-lg" style="width: 100px; height: 100px; border-color: #334155;" alt="Profile Photo">
+                                <div class="camera-overlay">
+                                    <i class="fas fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="uploadProfilePic(this)" style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+                            <span style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organizer</span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Section: Info Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        
+                        <!-- Organizer Details Card -->
+                        <div style="padding: 20px; background: rgba(30, 41, 59, 0.4); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <h4 style="color: #60a5fa; margin-bottom: 20px; border-bottom: 2px solid rgba(96,165,250,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-user-tie"></i> Organizer Details
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Full Name</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.full_name}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Email Address</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1rem; margin-top: 4px; word-break: break-all;">${org.email}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Phone Number</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.phone}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Alt. Contact</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.alt_contact || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Information Card -->
+                        <div style="padding: 20px; background: rgba(30, 41, 59, 0.4); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <h4 style="color: #a855f7; margin-bottom: 20px; border-bottom: 2px solid rgba(168,85,247,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-briefcase"></i> Business Information
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Organization Name</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.org_name || 'N/A'}</div>
+                                </div>
+                                 <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Organization Type</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.org_type || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Organization Email</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1rem; margin-top: 4px; word-break: break-all;">${org.org_email || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Official Address</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 0.95rem; line-height: 1.4; margin-top: 4px;">${org.official_address || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Website URL</label>
+                                    <a href="${org.website && org.website.startsWith('http') ? org.website : 'https://' + org.website}" target="_blank" style="font-weight: 600; color: #3b82f6; display: block; font-size: 0.9rem; margin-top: 4px; word-break: break-all;">${org.website || 'N/A'}</a>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Social Media Link</label>
+                                    <a href="${org.social_link && org.social_link.startsWith('http') ? org.social_link : 'https://' + org.social_link}" target="_blank" style="font-weight: 600; color: #ec4899; display: block; font-size: 0.9rem; margin-top: 4px; word-break: break-all;">${org.social_link || 'N/A'}</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Details Card -->
+                        <div style="padding: 20px; background: rgba(30, 41, 59, 0.4); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <h4 style="color: #f59e0b; margin-bottom: 20px; border-bottom: 2px solid rgba(245,158,11,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-file-contract"></i> Verification Details
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Trade License Number</label>
+                                    <div style="font-weight: 700; color: #ffffff; font-size: 1.2rem; letter-spacing: 1px; margin-top: 4px;">${org.license_number || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Tax Identification Number (TIN)</label>
+                                    <div style="font-weight: 700; color: #ffffff; font-size: 1.2rem; letter-spacing: 1px; margin-top: 4px;">${org.tax_number || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Information Card -->
+                        <div style="padding: 20px; background: rgba(30, 41, 59, 0.4); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <h4 style="color: #10b981; margin-bottom: 20px; border-bottom: 2px solid rgba(16,185,129,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-money-bill-wave"></i> Payment Information
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">bKash Number</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.bkash_number || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Nagad Number</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.nagad_number || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Upay Number</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.upay_number || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700;">Rocket Number</label>
+                                    <div style="font-weight: 600; color: #ffffff; font-size: 1.1rem; margin-top: 4px;">${org.rocket_number || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('profile-content').innerHTML = html;
+        }
+
+        function uploadLogo(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function () {
+                const base64 = reader.result;
+                const res = await fetch(API + '/update-pic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: org.id, role: 'organizer', imageBase64: base64, field: 'logo' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Logo Updated! Please Re-login to see changes strictly, or wait for refresh.');
+                    org.org_logo = base64;
+                    localStorage.setItem('user', JSON.stringify(org));
+                    loadProfile();
+                } else {
+                    alert('Failed to update logo');
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function uploadProfilePic(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Size check (Max 2MB)
+            const maxSize = 2 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert("File is too big! Please select an image under 2MB.");
+                input.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function () {
+                const base64 = reader.result;
+
+                // Instant preview
+                document.getElementById('org_profile_pic_display').src = base64;
+
+                // Upload to server
+                try {
+                    const res = await fetch(API + '/update-pic', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: org.id, role: 'organizer', imageBase64: base64, field: 'profile_pic' })
+                    });
+
+                    if (!res.ok) {
+                        throw new Error(`Server status: ${res.status}`);
+                    }
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert('Profile Picture Updated!');
+                        org.profile_pic = base64;
+                        localStorage.setItem('user', JSON.stringify(org));
+                    } else {
+                        alert('Server Error: ' + (data.error || 'Unknown Error'));
+                    }
+                } catch (err) {
+                    console.error("Upload Error:", err);
+                    alert("Connection failed! Make sure your server is running.");
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('eventForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const body = {
+                orgId: org.id,
+                title: document.getElementById('e_title').value,
+                desc: document.getElementById('e_desc').value,
+                loc: document.getElementById('e_loc').value,
+                date: document.getElementById('e_date').value,
+                time: document.getElementById('e_time').value,
+                deadline: document.getElementById('e_dead').value,
+                price: document.getElementById('e_price').value,
+                charge: document.getElementById('e_charge').value,
+                seats: document.getElementById('e_seats').value,
+                contact: document.getElementById('e_contact').value,
+                social_link: document.getElementById('e_social').value
+            };
+
+            await fetch(API + '/events', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+            });
+            alert('Event Created Successfully!');
+            document.getElementById('createModal').style.display = 'none';
+            // Clear the form
+            document.getElementById('eventForm').reset();
+            // Explicitly call loadMyEvents to refresh the list on the dashboard
+            loadMyEvents();
+        };
+
+        // Edit Event Function
+        function editEvent(eventId, encodedEvent) {
+            const event = JSON.parse(decodeURIComponent(encodedEvent));
+
+            document.getElementById('edit_event_id').value = eventId;
+            document.getElementById('edit_title').value = event.title || '';
+            document.getElementById('edit_desc').value = event.description || '';
+            document.getElementById('edit_loc').value = event.location || '';
+
+            // Format dates for input fields
+            if (event.event_date) {
+                const eventDate = new Date(event.event_date);
+                document.getElementById('edit_date').value = eventDate.toISOString().split('T')[0];
+            }
+            if (event.reg_deadline) {
+                const deadlineDate = new Date(event.reg_deadline);
+                document.getElementById('edit_dead').value = deadlineDate.toISOString().split('T')[0];
+            }
+
+            document.getElementById('edit_time').value = event.start_time || '';
+            document.getElementById('edit_price').value = event.ticket_price || 0;
+            document.getElementById('edit_charge').value = event.service_charge || 0;
+            document.getElementById('edit_seats').value = event.total_seats || 0;
+            document.getElementById('edit_contact').value = event.contact_number || '';
+            document.getElementById('edit_social').value = event.social_link || '';
+
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // Edit Event Form Submit
+        document.getElementById('editEventForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const eventId = document.getElementById('edit_event_id').value;
+            const body = {
+                title: document.getElementById('edit_title').value,
+                desc: document.getElementById('edit_desc').value,
+                loc: document.getElementById('edit_loc').value,
+                date: document.getElementById('edit_date').value,
+                time: document.getElementById('edit_time').value,
+                deadline: document.getElementById('edit_dead').value,
+                price: document.getElementById('edit_price').value,
+                charge: document.getElementById('edit_charge').value,
+                seats: document.getElementById('edit_seats').value,
+                contact: document.getElementById('edit_contact').value,
+                social_link: document.getElementById('edit_social').value
+            };
+
+            try {
+                const res = await fetch(API + `/events/${eventId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    if (data.changesCount > 0) {
+                        alert(`✅ Event updated successfully! ${data.changesCount} change(s) made. All booked users will be notified via email and SMS.`);
+                    } else {
+                        alert('ℹ️ No changes were detected.');
+                    }
+                    document.getElementById('editModal').style.display = 'none';
+                    loadMyEvents();
+                } else {
+                    alert('❌ Error updating event: ' + (data.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('❌ Server connection error');
+            }
+        };
+
+
+        async function deleteEvent(id) {
+            if (!confirm("Are you sure? This will refund all users.")) return;
+            const res = await fetch(API + `/events/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            alert(data.success ? 'Event Deleted & Refunds Initiated' : 'Error');
+            loadMyEvents();
+        }
+        let currentEventId = null;  // Track which event we're viewing
+
+        async function viewUsers(eventId) {
+            currentEventId = eventId;  // Store for refreshing
+            const res = await fetch(API + `/event-users/${eventId}`);
+            currentUsers = await res.json();
+
+            document.querySelector('#users-table tbody').innerHTML = currentUsers.map(u => {
+                let statusBadge = '';
+                let actionButtons = '';
+
+                if (u.payment_status === 'pending') {
+                    statusBadge = '<span class="badge badge-pending">Pending</span>';
+                    actionButtons = `
+                        <div style="display:flex; gap:5px; flex-direction:column;">
+                            <button class="btn btn-primary" style="font-size:0.7rem; padding:4px 8px;" onclick="approveBooking(${u.booking_id})">Approve</button>
+                            <button class="btn btn-danger" style="font-size:0.7rem; padding:4px 8px; background:#991b1b; border:none;" onclick="rejectBooking(${u.booking_id})">Reject</button>
+                        </div>
+                    `;
+                } else if (u.payment_status === 'approved') {
+                    statusBadge = '<span class="badge badge-approved">Approved</span>';
+                    actionButtons = '<span style="color:#64748b;">—</span>';
+                } else if (u.payment_status === 'rejected') {
+                    statusBadge = '<span class="badge badge-rejected">Rejected</span>';
+                    actionButtons = '<span style="color:#64748b;">—</span>';
+                } else {
+                    statusBadge = u.payment_status || 'N/A';
+                    actionButtons = '—';
+                }
+
+                return `<tr>
+                    <td>${u.full_name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.phone}</td>
+                    <td>${u.quantity}</td>
+                    <td>${u.total_cost}</td>
+                    <td><button class="btn btn-primary" style="font-size:0.7rem; padding:4px 12px; border-radius: 50px;" onclick="showBookingDetails(${u.booking_id})">See Details</button></td>
+                    <td>${statusBadge}</td>
+                    <td>${actionButtons}</td>
+                </tr>`;
+            }).join('');
+            document.getElementById('userListModal').style.display = 'flex';
+        }
+
+
+        function downloadCSV() {
+            let csv = "Name,Email,Phone,Quantity,Total Cost,Status\n";
+            currentUsers.forEach(u => csv += `${u.full_name},${u.email},${u.phone},${u.quantity},${u.total_cost},${u.payment_status || 'N/A'}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'event_users.csv'; a.click();
+        }
+
+        async function showBookingDetails(bookingId) {
+            // Robust search: match either booking_id or id
+            const b = currentUsers.find(u => u.booking_id === bookingId || u.id === bookingId);
+            if (!b) return alert("Booking not found");
+
+            document.getElementById('modalEventTitle').innerText = b.event_title || "Booking Details";
+
+            // Use fallback for bookingId consistently
+            const bId = b.booking_id || b.id;
+
+            const content = `
+                <div class="detail-item"><strong>Customer</strong><span>${b.full_name || 'N/A'}</span></div>
+                <div class="detail-item"><strong>Email</strong><span>${b.email || 'N/A'}</span></div>
+                <div class="detail-item"><strong>Payment Number</strong><span>${b.payment_phone || b.phone || 'N/A'}</span></div>
+                <div class="detail-item"><strong>Quantity</strong><span>${b.quantity} ticket(s)</span></div>
+                <div class="detail-item"><strong>Total</strong><span style="color: #10b981; font-weight: bold;">${b.total_cost} BDT</span></div>
+                <div class="detail-item"><strong>Method</strong><span class="tag" style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">${b.payment_gateway}</span></div>
+                <div class="detail-item"><strong>Transaction ID</strong><span style="font-family: monospace; background: rgba(0, 0, 0, 0.3); padding: 4px 8px; border-radius: 4px; color: #e2e8f0;">${b.transaction_id}</span></div>
+                <div class="detail-item"><strong>Status</strong><span style="color: ${b.payment_status === 'pending' ? '#f59e0b' : '#10b981'}; font-weight: bold;">${b.payment_status === 'pending' ? '⏳ Pending' : '✓ ' + b.payment_status}</span></div>
+            `;
+            document.getElementById('bookingDetailsContent').innerHTML = content;
+
+            document.getElementById('modalActionButtons').innerHTML = ''; // Ensure buttons are cleared
+            document.getElementById('bookingDetailsModal').style.display = 'flex';
+        }
+
+        async function approveBooking(bookingId) {
+            if (!confirm('Approve this payment? The user will be notified with full event details.')) return;
+
+            const res = await fetch(API + '/approve-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alert('✅ Payment Verified & Confirmed! Welcome message has been sent to the user.');
+                document.getElementById('bookingDetailsModal').style.display = 'none';
+                viewUsers(currentEventId); // Refresh table
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error'));
+            }
+        }
+
+        async function rejectBooking(bookingId) {
+            if (!confirm('Reject this payment? The seats will be released.')) return;
+
+            const res = await fetch(API + '/reject-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bookingId })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alert('❌ Booking Rejected. User has been notified.');
+                document.getElementById('bookingDetailsModal').style.display = 'none';
+                viewUsers(currentEventId); // Refresh table
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error'));
+            }
+        }
+
+        // Removed redundant global loadPendingBookings function
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        async function loadAdminList() {
+            try {
+                const res = await fetch(API + '/admins/public');
+                const admins = await res.json();
+                const grid = document.getElementById('admin-grid');
+
+                grid.innerHTML = admins.map(a => `
+                    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; text-align: center; transition: transform 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 220px; margin: 0 auto;">
+                        <div style="width: 100%; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; background: #1e293b; border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="${a.profile_pic || 'https://via.placeholder.com/200'}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="width: 100%;">
+                            <h4 style="color: white; margin: 0; font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.full_name}</h4>
+                            <p style="color: #10b981; font-size: 0.85rem; margin: 3px 0 8px 0; font-weight: 600;">Ayojon Admin</p>
+                            
+                            <!-- Toggleable Details -->
+                            <div id="details-${a.id}" style="display:none; width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 0.8rem; text-align: left; animation: fadeIn 0.3s ease; margin-bottom: 12px; border-left: 2px solid #10b981;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                                    <i class="fas fa-envelope" style="color:#10b981; font-size:0.8rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.email}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <i class="fas fa-phone" style="color:#10b981; font-size:1rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem;">${a.phone}</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="font-size:0.7rem; padding:8px 15px; border-radius:50px; width: 100%;" 
+                                onclick="toggleAdminDetails(${a.id}, this)">See Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                alert("Error loading admins");
+            }
+        }
+
+        function toggleAdminDetails(id, btn) {
+            const div = document.getElementById(`details-${id}`);
+            const isHidden = div.style.display === 'none';
+            div.style.display = isHidden ? 'block' : 'none';
+            btn.innerText = isHidden ? 'Hide Details' : 'See Details';
+
+            // Auto-scroll if content expands
+            if (isHidden) {
+                div.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        loadMyEvents();
+    </script>
+</body>
+
+</html>

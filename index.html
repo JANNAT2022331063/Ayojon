@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayojon - Event Management</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="homepage.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="images/logo.png" alt="Ayojon Logo">
+        </div>
+
+        <nav>
+            <a href="javascript:void(0)" onclick="openRoleModal('login')">Login</a>
+            <a href="#about-us">About Us</a>
+            <a href="javascript:void(0)" onclick="openRoleModal('signup')" class="nav-btn-login">Sign Up</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <main>
+        <section class="hero">
+            <h2 class="welcome-line">Welcome to</h2>
+            <h1 class="brand-name">Ayojon</h1>
+            <br>
+            <p class="tagline">Where Every Event Comes True</p>
+            <br><br>
+            <p class="description">From University events to dream Weddings – create, book and celebrate seamlessly with
+                our smart event platform.</p>
+
+            <!-- Get Started Button -->
+            <a href="javascript:void(0)" onclick="openRoleModal('signup')" class="get-started-btn">Get Started</a>
+        </section>
+        <!-- About Us Section -->
+        <section id="about-us" class="about-us-wrapper">
+            <div class="about-us-container">
+                <h1>About Us</h1>
+                <p class="subtitle">Discover Ayojon and how we simplify event management</p>
+
+                <div class="about-section">
+                    <div class="about-text">
+                        <p>
+                            Ayojon is a modern web-based platform that helps organizers create and manage events easily,
+                            and allows users to discover and book events conveniently.
+                        </p>
+                        <p>
+                            Our mission is to make event management smooth and enjoyable for everyone.
+                            Users receive instant confirmations, reminders, and updates, while organizers can track
+                            attendees and manage their events efficiently.
+                        </p>
+                    </div>
+
+                    <div class="about-image">
+                        <img src="images/event.jpg" alt="About Us">
+                    </div>
+                </div>
+
+                <div class="team">
+                    <h2>Meet the Team</h2>
+                    <div class="team-members">
+                        <div class="member">
+                            <img src="images/priya.jpg" alt="Team Member">
+                            <h3>Priya Rani Vokto</h3>
+                            <p>Frontend Developer</p>
+                        </div>
+                        <div class="member">
+                            <img src="images/jannat.jpg" alt="Team Member">
+                            <h3>Jannat Bhuiyan</h3>
+                            <p>UI/UX Designer</p>
+                        </div>
+                        <div class="member">
+                            <img src="images/shahed.jpeg" alt="Team Member">
+                            <h3>Md. Shahed Ali</h3>
+                            <p>Backend Developer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-container">
+                <!-- Quick Links -->
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="javascript:void(0)" onclick="openRoleModal('login')">Login</a></li>
+                        <li><a href="javascript:void(0)" onclick="openRoleModal('signup')">Sign Up</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <p>Phone: +880 1634724217</p>
+                    <p>Email: info@ayojon.com</p>
+                </div>
+
+                <!-- Location -->
+                <div class="footer-column">
+                    <h3>Location</h3>
+                    <p>Sylhet, Bangladesh</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Ayojon. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- ============================================ -->
+        <!-- MODALS for Authentication (HIDDEN)           -->
+        <!-- These are essential for the dashboard logic  -->
+        <!-- ============================================ -->
+
+        <div id="roleModal" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <span class="close" onclick="closeModal('roleModal')">&times;</span>
+                <h2 id="modalTitle">Select Role</h2>
+                <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-primary" onclick="proceedAuth('user')">As User</button>
+                    <button class="btn btn-primary" onclick="proceedAuth('organizer')">As Organizer</button>
+                    <button class="btn btn-primary" onclick="proceedAuth('admin')">As Admin</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="authModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('authModal')">&times;</span>
+                <h2 id="authTitle">Login</h2>
+                <form id="authForm">
+
+                    <h4 id="basicInfoHead" class="form-section-title hidden">User/Organizer/Admin Information</h4>
+
+                    <div id="nameField" class="hidden">
+                        <input id="f_name" type="text" placeholder="Full Name" autocomplete="off">
+                    </div>
+
+                    <input id="f_email" type="email" placeholder="Email Address" autocomplete="off" required>
+
+                    <div id="phoneField" class="hidden">
+                        <input id="f_phone" type="text" placeholder="Phone Number" autocomplete="off">
+                    </div>
+
+                    <div id="altPhoneField" class="hidden">
+                        <input id="o_alt" placeholder="Alternate Contact Number" autocomplete="off">
+                    </div>
+
+
+                    <div id="addressField" class="hidden">
+                        <input id="f_address" type="text" placeholder="Address" autocomplete="off">
+                    </div>
+
+
+                    <input id="f_pass" type="password" placeholder="Password" autocomplete="new-password" required>
+
+                    <div id="confirmPassField" class="hidden">
+                        <input id="f_cpass" type="password" placeholder="Confirm Password" autocomplete="new-password">
+                    </div>
+
+                    <div id="userPicField" class="hidden">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Profile
+                            Picture
+                            (Optional, Max 2MB):
+                        </p>
+                        <input type="file" accept="image/png, image/jpeg, image/webp"
+                            onchange="convertBase64(this, 'user_base64')">
+                        <input type="hidden" id="user_base64">
+                    </div>
+
+                    <div id="orgPicField" class="hidden">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Your Profile
+                            Picture (Optional, Max
+                            2MB):</p>
+                        <input type="file" accept="image/png, image/jpeg, image/webp"
+                            onchange="convertBase64(this, 'org_profile_base64')">
+                        <input type="hidden" id="org_profile_base64">
+                    </div>
+
+                    <div id="adminPicField" class="hidden">
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #cbd5e1;">Admin Profile Picture:</p>
+                        <input type="file" accept="image/png, image/jpeg, image/webp"
+                            onchange="convertBase64(this, 'admin_base64')">
+                        <input type="hidden" id="admin_base64">
+                    </div>
+
+                    <div id="adminKeyField" class="hidden">
+                        <input id="admin_key" type="password" placeholder="Secret Entry Code" autocomplete="off">
+                    </div>
+
+                    <div id="orgFields" class="hidden">
+                        <h4 class="form-section-title">Business Information</h4>
+                        <input id="o_orgname" placeholder="Organization Name" autocomplete="off">
+                        <input id="o_type" type="text" placeholder="Organization Type" autocomplete="off">
+                        <input id="o_org_email" type="email" placeholder="Organization Email" autocomplete="off">
+                        <input id="o_address" placeholder="Official Address" autocomplete="off">
+                        <input id="o_web" placeholder="Website URL" autocomplete="off">
+                        <input id="o_social" placeholder="Social Media Profile Link" autocomplete="off">
+
+                        <h4 class="form-section-title">Verification Details</h4>
+                        <input id="o_license" placeholder="Trade License Number" autocomplete="off">
+                        <input id="o_tax" placeholder="Tax Identification Number (TIN)" autocomplete="off">
+
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Organization
+                            Logo
+                            (Max 2MB):</p>
+                        <input type="file" accept="image/png, image/jpeg, image/webp"
+                            onchange="convertBase64(this, 'logo_base64')">
+                        <input type="hidden" id="logo_base64">
+
+                        <h4 class="form-section-title">Payment Information</h4>
+                        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 10px;">
+                            📱 Enter your mobile banking numbers for receiving payments. You can add multiple payment
+                            methods.
+                        </p>
+
+                        <label style="font-size: 0.9rem; color: #cbd5e1; margin-top: 10px;">💰 bKash Number
+                            (Optional)</label>
+                        <input id="o_bkash_number" type="tel" placeholder="e.g., 01712345678" maxlength="11"
+                            autocomplete="off"
+                            style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+
+                        <label style="font-size: 0.9rem; color: #cbd5e1; margin-top: 10px;">💰 Nagad Number
+                            (Optional)</label>
+                        <input id="o_nagad_number" type="tel" placeholder="e.g., 01712345678" maxlength="11"
+                            autocomplete="off"
+                            style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+
+                        <label style="font-size: 0.9rem; color: #cbd5e1; margin-top: 10px;">💰 Upay Number
+                            (Optional)</label>
+                        <input id="o_upay_number" type="tel" placeholder="e.g., 01712345678" maxlength="11"
+                            autocomplete="off"
+                            style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+
+                        <label style="font-size: 0.9rem; color: #cbd5e1; margin-top: 10px;">💰 Rocket Number
+                            (Optional)</label>
+                        <input id="o_rocket_number" type="tel" placeholder="e.g., 01712345678" maxlength="11"
+                            autocomplete="off"
+                            style="width:100%; padding:10px; margin:8px 0; border:1px solid #ddd; border-radius:5px;">
+
+                        <p style="font-size: 0.75rem; color: #cbd5e1; margin-top: 5px;">
+                            ⚠️ Note: At least one payment method is recommended for receiving event bookings
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px;">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            let currentAction = 'login';
+            let currentRole = 'user';
+            const API = 'http://localhost:5000';
+
+            function openRoleModal(action) {
+                currentAction = action;
+                document.getElementById('modalTitle').innerText = action === 'signup' ? 'Sign Up As' : 'Login As';
+                document.getElementById('roleModal').style.display = 'flex';
+            }
+
+            function proceedAuth(role) {
+                currentRole = role;
+                closeModal('roleModal');
+                document.getElementById('authModal').style.display = 'flex';
+                document.getElementById('authTitle').innerText = `${currentAction.toUpperCase()} - ${role.toUpperCase()}`;
+
+                // Set dynamic section header based on role
+                const basicInfoHead = document.getElementById('basicInfoHead');
+                if (role === 'user') basicInfoHead.innerText = 'User Information';
+                else if (role === 'organizer') basicInfoHead.innerText = 'Organizer Information';
+                else if (role === 'admin') basicInfoHead.innerText = 'Admin Information';
+
+                const isSignup = currentAction === 'signup';
+
+                // --- AUTOFILL CONFIGURATION ---
+                const emailField = document.getElementById('f_email');
+                const passField = document.getElementById('f_pass');
+                const cpassField = document.getElementById('f_cpass');
+                const nameField = document.getElementById('f_name');
+                const phoneField = document.getElementById('f_phone');
+
+                if (isSignup) {
+                    // Signup: Disable autofill and suggestions
+                    emailField.setAttribute('autocomplete', 'off');
+                    passField.setAttribute('autocomplete', 'new-password');
+                    cpassField.setAttribute('autocomplete', 'new-password');
+                    nameField.setAttribute('autocomplete', 'off');
+                    phoneField.setAttribute('autocomplete', 'off');
+                } else {
+                    // Login: Disable autofill for email/password
+                    emailField.setAttribute('autocomplete', 'off');
+                    passField.setAttribute('autocomplete', 'off');
+                }
+
+                // Toggle Basic Fields
+                document.getElementById('nameField').classList.toggle('hidden', !isSignup);
+                document.getElementById('confirmPassField').classList.toggle('hidden', !isSignup);
+
+                // Toggle Phone (Visible for Admin & User & Organizer during Signup)
+                const showPhone = isSignup;
+                document.getElementById('phoneField').classList.toggle('hidden', !showPhone);
+
+                // Toggle Address (Visible for User during Signup)
+                const showAddress = isSignup && role === 'user';
+                document.getElementById('addressField').classList.toggle('hidden', !showAddress);
+
+                // Toggle User Pic (Visible for User during Signup)
+                const showUserPic = isSignup && role === 'user';
+                document.getElementById('userPicField').classList.toggle('hidden', !showUserPic);
+
+                // Toggle Admin Pic
+                const showAdminPic = isSignup && role === 'admin';
+                document.getElementById('adminPicField').classList.toggle('hidden', !showAdminPic);
+
+                // Toggle Admin Key Field
+                document.getElementById('adminKeyField').classList.toggle('hidden', !showAdminPic);
+
+                // Toggle Alt Phone (Organizer only)
+                const showAltPhone = isSignup && role === 'organizer';
+                document.getElementById('altPhoneField').classList.toggle('hidden', !showAltPhone);
+
+                // Toggle Org Pic (Organizer only)
+                const showOrgPic = isSignup && role === 'organizer';
+                document.getElementById('orgPicField').classList.toggle('hidden', !showOrgPic);
+
+                // Toggle Org Fields
+                if (isSignup && role === 'organizer') {
+                    document.getElementById('basicInfoHead').classList.remove('hidden');
+                    document.getElementById('orgFields').classList.remove('hidden');
+                } else {
+                    document.getElementById('basicInfoHead').classList.toggle('hidden', !isSignup);
+                    document.getElementById('orgFields').classList.add('hidden');
+                }
+            }
+
+            function closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+                // Clear the auth form when closing to prevent autofill issues
+                if (id === 'authModal') {
+                    document.getElementById('authForm').reset();
+                    document.getElementById('user_base64').value = '';
+                    document.getElementById('admin_base64').value = '';
+                    document.getElementById('logo_base64').value = '';
+                    document.getElementById('org_profile_base64').value = '';
+                }
+            }
+
+            function convertBase64(input, targetId) {
+                if (input.files && input.files[0]) {
+                    const file = input.files[0];
+                    console.log(`Converting image for ${targetId}:`, file.name, `(${(file.size / 1024).toFixed(1)}KB)`, file.type);
+
+                    // Check for supported formats (HEIC is not supported by browsers)
+                    const supportedFormats = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!supportedFormats.includes(file.type)) {
+                        alert("Unsupported image format! Please use JPG, PNG, or WEBP. (HEIC is not supported)");
+                        input.value = ""; return;
+                    }
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert("Image too big! Max 2MB.");
+                        input.value = ""; return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        document.getElementById(targetId).value = reader.result;
+                        console.log(`✅ Image converted for ${targetId}, length: ${reader.result.length}`);
+                    };
+                    reader.onerror = () => {
+                        console.error(`❌ Failed to read image for ${targetId}`);
+                        alert("Failed to read image. Please try again.");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            document.getElementById('authForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('f_email').value;
+                const password = document.getElementById('f_pass').value;
+
+                if (currentAction === 'signup') {
+                    const cpass = document.getElementById('f_cpass').value;
+                    if (password !== cpass) return alert("Passwords do not match");
+                }
+
+                const endpoint = `/auth/${currentAction}/${currentRole}`;
+                const body = { email, password };
+
+                if (currentAction === 'signup') {
+                    body.full_name = document.getElementById('f_name').value;
+
+                    body.phone = document.getElementById('f_phone').value;
+                    if (currentRole === 'user') {
+                        body.address = document.getElementById('f_address').value;
+                        body.profile_pic = document.getElementById('user_base64').value || null;
+                    }
+                    if (currentRole === 'admin') {
+                        body.profile_pic = document.getElementById('admin_base64').value || null;
+                        body.admin_key = document.getElementById('admin_key').value;
+                        console.log('🔍 Admin profile_pic being sent:', body.profile_pic ? `${body.profile_pic.substring(0, 50)}... (length: ${body.profile_pic.length})` : 'None/Empty');
+                    }
+                    if (currentRole === 'organizer') {
+                        body.org_name = document.getElementById('o_orgname').value;
+                        body.org_type = document.getElementById('o_type').value;
+                        body.org_email = document.getElementById('o_org_email').value;
+                        body.official_address = document.getElementById('o_address').value;
+                        body.website = document.getElementById('o_web').value;
+                        body.social_link = document.getElementById('o_social').value;
+                        body.alt_contact = document.getElementById('o_alt').value;
+                        body.license_number = document.getElementById('o_license').value;
+                        body.tax_number = document.getElementById('o_tax').value;
+
+                        // New: Multiple payment methods
+                        body.bkash_number = document.getElementById('o_bkash_number').value || '';
+                        body.nagad_number = document.getElementById('o_nagad_number').value || '';
+                        body.upay_number = document.getElementById('o_upay_number').value || '';
+                        body.rocket_number = document.getElementById('o_rocket_number').value || '';
+
+                        body.org_logo = document.getElementById('logo_base64').value;
+                        body.profile_pic = document.getElementById('org_profile_base64').value || null;
+                    }
+                    console.log(`📤 Sending Signup Request to ${endpoint}:`, body);
+                }
+
+                try {
+                    const res = await fetch(API + endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        if (currentAction === 'login') {
+                            // Login Success
+                            localStorage.setItem('user', JSON.stringify(data.user));
+                            if (currentRole === 'user') window.location.href = 'user_dashboard.html';
+                            else if (currentRole === 'organizer') window.location.href = 'organizer_dashboard.html';
+                            else if (currentRole === 'admin') window.location.href = 'admin_dashboard.html';
+                        } else {
+                            // Signup Success
+                            // Show the message sent from server (e.g. "Wait for admin approval")
+                            alert(data.message || 'Signup Successful!');
+
+                            // Clear the form to prevent autofill on next login
+                            document.getElementById('authForm').reset();
+                            document.getElementById('user_base64').value = '';
+                            document.getElementById('admin_base64').value = '';
+                            document.getElementById('logo_base64').value = '';
+                            document.getElementById('org_profile_base64').value = '';
+
+                            closeModal('authModal');
+                        }
+                    } else {
+                        alert(data.message || data.error || "Error occurred");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Server Connection Error.');
+                }
+            };
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ayojon User Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .pill-tab {
+            padding: 12px 30px;
+            border-radius: 9999px;
+            font-weight: 700;
+            background: #86cab3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .pill-tab:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .pill-tab:active {
+            transform: translateY(0);
+        }
+
+        /* Personalized Dashboard Styles */
+        .user-greeting {
+            font-size: 3.5rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            margin-bottom: 0.8rem !important;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        .user-subtitle {
+            font-size: 1.4rem !important;
+            color: #df2131 !important;
+            /* Theme Blue */
+            font-weight: 500 !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        /* Scrolling Carousel Styles */
+        .carousel-container {
+            overflow: hidden;
+            width: 100%;
+            margin-top: 50px;
+            padding: 30px 0;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .carousel-track {
+            display: flex;
+            width: calc(430px * 10);
+            animation: scroll 30s linear infinite;
+        }
+
+        .carousel-track:hover {
+            animation-play-state: paused;
+        }
+
+        .carousel-track img {
+            width: 400px;
+            height: 250px;
+            object-fit: cover;
+            margin: 0 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-track img:hover {
+            transform: scale(1.05);
+            border-color: #2b53b9;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(calc(-430px * 5));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html" class="logo-link">
+            <img src="images/logo.png" alt="Ayojon Logo" class="logo-img">
+        </a>
+        <ul>
+            <li onclick="showSection('home')">Home</li>
+            <li onclick="showSection('events')">Events</li>
+            <li onclick="showSection('bookings')">My Bookings</li>
+            <li onclick="showSection('profile')">Profile</li>
+            <li onclick="showSection('admins')">Admin Panel</li>
+            <li onclick="logout()">Logout</li>
+        </ul>
+    </nav>
+
+    <div class="container" id="home-sec">
+        <div class="hero" style="padding: 3rem 2rem 0.5rem 2rem;">
+            <h1 id="greeting" class="user-greeting">Hello!</h1>
+            <p class="user-subtitle">Welcome to your personal event dashboard.</p>
+        </div>
+        <div style="text-align:center;">
+            <h3 style="color: #85a2ca; margin-bottom: 15px;">Check out what's happening!</h3>
+            <button class="btn btn-primary" style="margin-top:10px; padding: 1rem 2.5rem; font-size: 1.1rem;"
+                onclick="showSection('events')">View All
+                Events</button>
+        </div>
+
+        <!-- Moving Image Carousel -->
+        <div class="carousel-container">
+            <div class="carousel-track">
+                <img src="images/d1.jpeg" alt="Seminar">
+                <img src="images/d2.jpeg" alt="Seminar">
+                <img src="images/d3.jpeg" alt="contest">
+                <img src="images/d4.jpeg" alt="Get together">
+                <img src="images/d5.jpeg" alt="Seminar">
+                <img src="images/d6.jpeg" alt="Seminar">
+                <img src="images/d7.jpeg" alt="contest">
+                <img src="images/d8.jpeg" alt="Get together">
+                <img src="images/d10.jpeg" alt="Seminar">
+                <img src="images/d9.jpeg" alt="Seminar">
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container hidden" id="bookings-sec">
+        <h1 style="margin-bottom: 20px; text-align: center;">My Bookings</h1>
+        <div style="text-align: center; margin-bottom: 30px; display: flex; justify-content: center; gap: 15px;">
+            <button id="btn-present" onclick="showBookingType('present')" class="pill-tab">
+                Present Bookings
+            </button>
+            <button id="btn-past" onclick="showBookingType('past')" class="pill-tab">
+                Past Bookings
+            </button>
+        </div>
+        <div id="bookings-grid" class="grid"></div>
+    </div>
+
+    <div class="container hidden" id="events-sec">
+        <h1 style="margin-bottom: 20px; border-bottom: 2px solid var(--secondary); display:inline-block;">Upcoming
+            Events</h1>
+        <div class="grid" id="events-grid"></div>
+    </div>
+
+    <div class="container hidden" id="admins-sec">
+        <h1 style="text-align: center; margin-bottom: 30px; color: #10b981;"><i class="fas fa-user-shield"></i> Ayojon
+            Admins</h1>
+        <div id="admin-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 10px; align-items: start;">
+            <!-- Cards populated by JS -->
+        </div>
+    </div>
+
+    <div class="container hidden" id="profile-sec">
+        <h1 style="text-align: center; margin-bottom: 20px;">My Profile</h1>
+        <div class="profile-card" id="profile-content">
+            <!-- Will be loaded via JS -->
+        </div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('bookModal').style.display='none'">&times;</span>
+            <h2>Book Event</h2>
+            <p id="b_title" style="color:var(--secondary); font-weight:bold;"></p>
+
+            <label>Ticket Quantity</label>
+            <input type="number" id="b_qty" value="1" min="1" onchange="calcTotal()">
+
+            <p>Ticket Price: <span id="b_price">0</span> BDT</p>
+            <p>Service Charge: <span id="b_charge">0</span> BDT</p>
+            <h3 style="margin-top:10px;">Total: <span id="b_total">0</span> BDT</h3>
+
+            <!-- Payment Instructions Section -->
+            <div class="info-box" style="margin:15px 0;">
+                <h4 style="color:#10b981; margin-bottom:10px;">💳 Payment Instructions</h4>
+                <p style="font-size:0.9rem; margin-bottom:10px; color: #cbd5e1;">Please make payment using any of the
+                    available methods below:</p>
+
+                <!-- Dynamic Payment Methods Display -->
+                <div id="payment_methods_display" style="margin:10px 0;">
+                </div>
+
+                <ol style="font-size:0.85rem; margin-top:10px; padding-left:20px; color: #cbd5e1;">
+                    <li>Choose one payment method from above</li>
+                    <li>Send <strong><span id="total_in_instruction" style="color: #ffffff;">0</span> BDT</strong> to
+                        that number</li>
+                    <li>Complete the transaction and note down your Transaction ID</li>
+                    <li>Enter the transaction details below</li>
+                </ol>
+            </div>
+
+            <!-- Transaction Details Section -->
+            <div class="info-box" style="margin:15px 0;">
+                <h4 style="color:#10b981; margin-bottom:10px;">📝 Enter Payment Details</h4>
+
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color: #cbd5e1;">Select Payment Method
+                    <span style="color:red;">*</span></label>
+                <select id="selected_payment_method"
+                    style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                    <option value="">-- Select Payment Method --</option>
+                </select>
+
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color: #cbd5e1;">Transaction ID <span
+                        style="color:red;">*</span></label>
+                <input type="text" id="transaction_id" placeholder="e.g., ABCD123456789"
+                    style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;"
+                    required>
+
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color: #cbd5e1;">Your Payment Phone
+                    Number <span style="color:red;">*</span></label>
+                <input type="tel" id="payment_phone" placeholder="e.g., 01712345678"
+                    style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;"
+                    required>
+
+                <p style="font-size:0.9rem; color:#facc15; margin-top:10px; font-weight: 600;">
+                    ⚠️ Enter the phone number you used to send the payment
+                </p>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%" onclick="submitBooking()">Confirm Booking</button>
+        </div>
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content"
+            style="max-width: 1000px; padding: 0; background: #0f172a; border-color: rgba(16, 185, 129, 0.4);">
+            <div
+                style="background: #10b981; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0;">
+                <h3
+                    style="margin: 0; color: white; display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.25rem;">
+                    <i class="fas fa-info-circle"></i> Event & Organizer Details
+                </h3>
+                <span class="close" onclick="document.getElementById('detailModal').style.display='none'"
+                    style="position: static; color: white; opacity: 1; font-size: 1.8rem;">&times;</span>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div style="padding: 20px 30px 0 30px; display: flex; gap: 12px;">
+                <button id="tab-event" class="pill-tab" onclick="switchTab('event')">
+                    <i class="fas fa-calendar-alt"></i> Event Details
+                </button>
+                <button id="tab-org" class="pill-tab" onclick="switchTab('org')">
+                    <i class="fas fa-briefcase"></i> Organization Details
+                </button>
+            </div>
+
+            <div style="padding: 30px; max-height: 75vh; overflow-y: auto;">
+
+                <!-- Event View -->
+                <div id="event-view">
+                    <div id="event-details-content">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Organization View -->
+                <div id="org-view" class="hidden">
+                    <div id="organizer-details-header"
+                        style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="grid"
+                        style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 0;">
+                        <!-- Section A: Organizer Details -->
+                        <div class="profile-card" id="org-section-a"
+                            style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Section B: Business Information -->
+                        <div class="profile-card" id="org-section-b"
+                            style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Section C: Verification Details -->
+                        <div class="profile-card" id="org-section-c"
+                            style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) window.location.href = 'index.html';
+
+        const API = 'http://localhost:5000';
+        let currentEvent = null;
+
+        document.getElementById('greeting').innerText = `Hello, ${user.full_name}!`;
+
+        let currentBookingType = 'present'; // Track current booking type
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const day = d.getDate().toString().padStart(2, '0');
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function formatTime(timeStr) {
+            if (!timeStr) return 'N/A';
+            // Handle if timeStr is already in a weird format or includes date
+            const parts = timeStr.split(':');
+            if (parts.length < 2) return timeStr;
+
+            let hours = parseInt(parts[0]);
+            let minutes = parseInt(parts[1]);
+
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const strTime = hours + ':' + (minutes < 10 ? '0' + minutes : minutes) + ' ' + ampm;
+            return strTime;
+        }
+
+        function showSection(sec) {
+            document.getElementById('home-sec').classList.toggle('hidden', sec !== 'home');
+            document.getElementById('events-sec').classList.toggle('hidden', sec !== 'events');
+            document.getElementById('bookings-sec').classList.toggle('hidden', sec !== 'bookings');
+            document.getElementById('profile-sec').classList.toggle('hidden', sec !== 'profile');
+            document.getElementById('admins-sec').classList.toggle('hidden', sec !== 'admins');
+
+            if (sec === 'events') loadEvents();
+            if (sec === 'bookings') loadMyBookings();
+            if (sec === 'profile') loadProfile();
+            if (sec === 'admins') loadAdminList();
+        }
+
+        function showBookingType(type) {
+            currentBookingType = type;
+            loadMyBookings();
+        }
+
+        async function loadMyBookings() {
+            try {
+                const res = await fetch(API + `/user-bookings/${user.id}`);
+                const bookings = await res.json();
+                const grid = document.getElementById('bookings-grid');
+
+                const now = new Date();
+                const filtered = bookings.filter(b => {
+                    const eventDate = new Date(b.event_date);
+                    if (currentBookingType === 'present') {
+                        return eventDate >= now; // Future events
+                    } else {
+                        return eventDate < now; // Past events
+                    }
+                });
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = `<p>No ${currentBookingType} bookings found.</p>`;
+                    return;
+                }
+
+                grid.innerHTML = filtered.map(b => {
+                    const statusColor = b.payment_status === 'approved' ? 'green' : 'orange';
+                    const statusIcon = b.payment_status === 'approved' ? '✓' : '⏳';
+                    const statusText = b.payment_status === 'approved' ? 'Approved' : 'Pending';
+
+                    return `
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>${b.title}</h3>
+                                <p><strong>Date:</strong> ${formatDate(b.event_date)}</p>
+                                <p><strong>Location:</strong> ${b.location}</p>
+                                <p><strong>Quantity:</strong> ${b.quantity} ticket(s)</p>
+                                <p><strong>Total Cost:</strong> ${b.total_cost} BDT</p>
+                                <p><strong>Transaction ID:</strong> <span style="font-family:monospace; background: rgba(0,0,0,0.2); color: #10b981; padding:4px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: bold;">${b.transaction_id || 'N/A'}</span></p>
+                                <p><strong>Status:</strong> <span style="color:${statusColor}; font-weight:bold;">${statusIcon} ${statusText}</span></p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error(e);
+                document.getElementById('bookings-grid').innerHTML = '<p>Error loading bookings.</p>';
+            }
+        }
+
+        async function loadEvents() {
+            try {
+                const res = await fetch(API + '/events');
+                const events = await res.json();
+                const grid = document.getElementById('events-grid');
+                grid.innerHTML = events.map(e => `
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="tag">${formatDate(e.event_date)}</span>
+                            <h3 style="margin:10px 0;">${e.title}</h3>
+                            <p>Loc: ${e.location}</p>
+                            <p style="color:var(--secondary); font-weight:bold;">${e.ticket_price} BDT</p>
+                            ${e.social_link ? `<p style="font-size: 0.9rem; margin-top: 5px;"><strong>Social:</strong> <a href="${e.social_link.startsWith('http') ? e.social_link : 'https://' + e.social_link}" target="_blank" style="color: #10b981; text-decoration: underline;">Link</a></p>` : ''}
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick='showDetails(${JSON.stringify(e)})'>See Details</button>
+                            <button class="btn btn-primary" onclick='openBook(${JSON.stringify(e)})'>Book Now</button>
+                        </div>
+                    </div>
+                `).join('');
+                if (events.length === 0) grid.innerHTML = '<p>No Upcoming Events.</p>';
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadProfile() {
+            const pic = (user.profile_pic && user.profile_pic.startsWith('data:image'))
+                ? user.profile_pic
+                : 'https://via.placeholder.com/100';
+
+            const html = `
+                <div style="text-align: center; margin-bottom: 25px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="profile-pic-container" style="margin: 0 auto; position: relative; width: 120px; height: 120px;">
+                        <img id="u_pic_display" src="${pic}" class="profile-pic-lg" alt="Profile Pic" style="width: 120px; height: 120px; border-color: #10b981;" onerror="this.src='https://via.placeholder.com/120'">
+                        <div class="camera-overlay">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" accept="image/*" onchange="uploadProfilePic(this)" style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; top: 0; left: 0;">
+                        </div>
+                    </div>
+                    <h2 id="u_name_display" style="color: #ffffff; margin: 15px 0 5px 0; font-size: 1.5rem;">${user.full_name}</h2>
+                    <p style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">Max size: 2MB</p>
+                </div>
+
+                <div class="detail-grid" style="display: grid; gap: 15px;">
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981; display: flex; align-items: center; gap: 20px;">
+                        <div style="font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; min-width: 150px;">Full Name</div>
+                        <div id="u_full_name" style="font-weight: 600; color: #ffffff; font-size: 1.1rem;">${user.full_name}</div>
+                    </div>
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981; display: flex; align-items: center; gap: 20px;">
+                        <div style="font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; min-width: 150px;">Email Address</div>
+                        <div id="u_email" style="font-weight: 600; color: #ffffff; font-size: 1.1rem;">${user.email}</div>
+                    </div>
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981; display: flex; align-items: center; gap: 20px;">
+                        <div style="font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; min-width: 150px;">Phone Number</div>
+                        <div id="u_phone" style="font-weight: 600; color: #ffffff; font-size: 1.1rem;">${user.phone}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('profile-content').innerHTML = html;
+        }
+
+        function uploadProfilePic(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // --- IMPORTANT: SIZE CHECK (Max 2MB) ---
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            if (file.size > maxSize) {
+                alert("File is too big! Please select an image under 2MB.");
+                input.value = ""; // clear input
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function () {
+                const base64 = reader.result;
+
+                // 1. Instant Preview
+                document.getElementById('u_pic_display').src = base64;
+
+                // 2. Upload
+                try {
+                    const res = await fetch(API + '/update-pic', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: user.id, role: 'user', imageBase64: base64 })
+                    });
+
+                    if (!res.ok) {
+                        throw new Error(`Server status: ${res.status}`);
+                    }
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert('Profile Picture Saved!');
+                        user.profile_pic = base64;
+                        localStorage.setItem('user', JSON.stringify(user));
+                    } else {
+                        alert('Server Error: ' + (data.error || 'Unknown Error'));
+                    }
+                } catch (err) {
+                    console.error("Upload Error:", err);
+                    alert("Connection failed! Make sure your server is running.");
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // --- Booking & Details Logic (Unchanged) ---
+        function switchTab(tab) {
+            document.getElementById('event-view').classList.toggle('hidden', tab !== 'event');
+            document.getElementById('org-view').classList.toggle('hidden', tab !== 'org');
+        }
+
+        function showDetails(e) {
+            console.log("DEBUG: Event & Organizer Data received:", e);
+            // Default to Event Tab
+            switchTab('event');
+
+            // Populate Event Details
+            document.getElementById('event-details-content').innerHTML = `
+                <div class="profile-card" style="padding: 25px; background: rgba(30, 41, 59, 0.4); border-radius: 16px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <h2 style="color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+                        <span style="background: var(--primary-green); width: 10px; height: 35px; border-radius: 5px;"></span>
+                        ${e.title}
+                    </h2>
+                    
+                    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Event Date & Time</strong>
+                            <span>${formatDate(e.event_date)} at ${formatTime(e.start_time)}</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Location</strong>
+                            <span>${e.location}</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Total Seats</strong>
+                            <span>${e.total_seats}</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Remaining Seats</strong>
+                            <span>${e.remaining_seats}</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Registration Deadline</strong>
+                            <span>${formatDate(e.reg_deadline)}</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Ticket Price</strong>
+                            <span style="color: #10b981; font-weight: bold;">${e.ticket_price} BDT (+ ${e.service_charge} Service)</span>
+                        </div>
+                        <div class="detail-item" style="border-left-color: var(--primary-green);">
+                            <strong>Contact Number</strong>
+                            <span>${e.contact_number}</span>
+                        </div>
+                        ${e.social_link ? `
+                        <div class="detail-item" style="border-left-color: #ec4899;">
+                            <strong>Social Media Link</strong>
+                            <a href="${e.social_link.startsWith('http') ? e.social_link : 'https://' + e.social_link}" target="_blank" style="color: #ec4899; font-weight: bold; text-decoration: underline;">Visit Event Page</a>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div style="margin-top: 25px; padding: 20px; background: rgba(15, 23, 42, 0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <strong style="display: block; color: var(--primary-green-light); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
+                            <i class="fas fa-align-left"></i> Event Description
+                        </strong>
+                        <p style="color: #e2e8f0; font-size: 1rem; line-height: 1.7; white-space: pre-line;">${e.description}</p>
+                    </div>
+                </div>
+            `;
+
+            // Populate Organizer Details Header
+            document.getElementById('organizer-details-header').innerHTML = `
+                <div style="display: flex; gap: 30px; align-items: center; justify-content: flex-start; width: 100%;">
+                    <div style="text-align: center;">
+                        <div class="profile-pic-container" style="width: 100px; height: 100px; margin: 0;">
+                            <img src="${e.org_logo || 'https://via.placeholder.com/100'}" class="profile-pic-lg" style="width: 100px; height: 100px; border-color: var(--primary-green);">
+                        </div>
+                        <span style="font-size: 0.7rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block;">Org Logo</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="profile-pic-container" style="width: 100px; height: 100px; margin: 0;">
+                            <img src="${e.org_profile_pic || 'https://via.placeholder.com/100'}" class="profile-pic-lg" style="width: 100px; height: 100px; border-color: #334155;">
+                        </div>
+                        <span style="font-size: 0.7rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; margin-top: 5px; display: block;">Organizer</span>
+                    </div>
+                </div>
+            `;
+
+            // Populate Section A: Organizer Details
+            document.getElementById('org-section-a').innerHTML = `
+                <h4 style="color: #60a5fa; margin-bottom: 20px; border-bottom: 2px solid rgba(96,165,250,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-user-tie"></i> Organizer Details
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Full Name</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1rem;">${e.organizer_name}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Email Address</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1rem; word-break: break-all;">${e.email || 'Not Provided'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Phone Number</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1rem;">${e.phone || 'Not Provided'}</div>
+                    </div>
+                </div>
+            `;
+
+            // Populate Section B: Business Information
+            document.getElementById('org-section-b').innerHTML = `
+                <h4 style="color: #a855f7; margin-bottom: 20px; border-bottom: 2px solid rgba(168,85,247,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-briefcase"></i> Business Information
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization Name</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1rem;">${e.org_name || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization Type</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1rem;">${e.org_type || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization Email</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 1.1rem; word-break: break-all;">${e.business_email || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Official Address</label>
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 0.9rem; line-height: 1.4;">${e.org_address || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Website URL</label>
+                        <a href="${e.org_website && e.org_website.startsWith('http') ? e.org_website : '#'}" target="_blank" style="font-weight: 600; color: #3b82f6; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem;">${e.org_website || 'N/A'}</a>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Social Media Link</label>
+                        <a href="${e.org_social && e.org_social.startsWith('http') ? e.org_social : '#'}" target="_blank" style="font-weight: 600; color: #ec4899; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem;">${e.org_social || 'N/A'}</a>
+                    </div>
+                </div>
+            `;
+
+            // Populate Section C: Verification Details
+            document.getElementById('org-section-c').innerHTML = `
+                <h4 style="color: #f59e0b; margin-bottom: 20px; border-bottom: 2px solid rgba(245,158,11,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-file-contract"></i> Verification Details
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Trade License Number</label>
+                        <div style="font-weight: 700; color: #f8fafc; font-size: 1.1rem; letter-spacing: 1px;">${e.org_license || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <label style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Tax Identification Number (TIN)</label>
+                        <div style="font-weight: 700; color: #f8fafc; font-size: 1.1rem; letter-spacing: 1px;">${e.org_tax || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function openBook(e) {
+            currentEvent = e;
+            document.getElementById('b_title').innerText = e.title;
+            document.getElementById('b_price').innerText = e.ticket_price;
+            document.getElementById('b_charge').innerText = e.service_charge;
+            calcTotal();
+
+            // Display all available payment methods
+            const paymentMethods = [];
+            const paymentMethodsDisplay = document.getElementById('payment_methods_display');
+            const paymentMethodSelect = document.getElementById('selected_payment_method');
+
+            // Clear previous options
+            paymentMethodSelect.innerHTML = '<option value="">-- Select Payment Method --</option>';
+
+            let methodsHTML = '<h5 style="margin-bottom:10px;">Available Payment Methods:</h5>';
+
+            // Check each payment method
+            if (e.bkash_number) {
+                paymentMethods.push({ name: 'bKash', number: e.bkash_number });
+                methodsHTML += `<div style="padding:10px; margin:8px 0; background:rgba(255,255,255,0.03); border-left:3px solid #E2136E; border-radius:6px;">
+                    <strong style="color:#ff4d94; font-size: 1.1rem;">💰 bKash:</strong> <span style="font-family:monospace; font-size: 1.2rem; color: #ffffff; margin-left:10px;">${e.bkash_number}</span>
+                </div>`;
+                paymentMethodSelect.innerHTML += `<option value="bKash">bKash - ${e.bkash_number}</option>`;
+            }
+            if (e.nagad_number) {
+                paymentMethods.push({ name: 'Nagad', number: e.nagad_number });
+                methodsHTML += `<div style="padding:10px; margin:8px 0; background:rgba(255,255,255,0.03); border-left:3px solid #F26522; border-radius:6px;">
+                    <strong style="color:#ff8533; font-size: 1.1rem;">💰 Nagad:</strong> <span style="font-family:monospace; font-size: 1.2rem; color: #ffffff; margin-left:10px;">${e.nagad_number}</span>
+                </div>`;
+                paymentMethodSelect.innerHTML += `<option value="Nagad">Nagad - ${e.nagad_number}</option>`;
+            }
+            if (e.upay_number) {
+                paymentMethods.push({ name: 'Upay', number: e.upay_number });
+                methodsHTML += `<div style="padding:10px; margin:8px 0; background:rgba(255,255,255,0.03); border-left:3px solid #8B1874; border-radius:6px;">
+                    <strong style="color:#d946ef; font-size: 1.1rem;">💰 Upay:</strong> <span style="font-family:monospace; font-size: 1.2rem; color: #ffffff; margin-left:10px;">${e.upay_number}</span>
+                </div>`;
+                paymentMethodSelect.innerHTML += `<option value="Upay">Upay - ${e.upay_number}</option>`;
+            }
+            if (e.rocket_number) {
+                paymentMethods.push({ name: 'Rocket', number: e.rocket_number });
+                methodsHTML += `<div style="padding:10px; margin:8px 0; background:rgba(255,255,255,0.03); border-left:3px solid #8B3278; border-radius:6px;">
+                    <strong style="color:#ec4899; font-size: 1.1rem;">💰 Rocket:</strong> <span style="font-family:monospace; font-size: 1.2rem; color: #ffffff; margin-left:10px;">${e.rocket_number}</span>
+                </div>`;
+                paymentMethodSelect.innerHTML += `<option value="Rocket">Rocket - ${e.rocket_number}</option>`;
+            }
+
+            // Fallback to legacy payment method if no specific methods are set
+            if (paymentMethods.length === 0 && e.payment_method && e.payment_number) {
+                paymentMethods.push({ name: e.payment_method, number: e.payment_number });
+                methodsHTML += `<div style="padding:10px; margin:8px 0; background:rgba(255,255,255,0.03); border-left:3px solid #0f766e; border-radius:6px;">
+                    <strong style="color:#10b981;">💰 ${e.payment_method}:</strong> <span style="font-family:monospace; font-size:1.1rem; color: #e2e8f0;">${e.payment_number}</span>
+                </div>`;
+                paymentMethodSelect.innerHTML += `<option value="${e.payment_method}">${e.payment_method} - ${e.payment_number}</option>`;
+            }
+
+            if (paymentMethods.length === 0) {
+                methodsHTML = '<p style="color:red;">⚠️ No payment methods available. Please contact the organizer.</p>';
+            }
+
+            paymentMethodsDisplay.innerHTML = methodsHTML;
+
+            // Clear previous inputs
+            document.getElementById('transaction_id').value = '';
+            document.getElementById('payment_phone').value = '';
+            document.getElementById('selected_payment_method').value = '';
+
+            document.getElementById('bookModal').style.display = 'flex';
+        }
+
+        function calcTotal() {
+            const qty = document.getElementById('b_qty').value;
+            const total = (currentEvent.ticket_price * qty) + parseFloat(currentEvent.service_charge);
+            document.getElementById('b_total').innerText = total;
+            document.getElementById('total_in_instruction').innerText = total;
+        }
+
+        function copyPaymentNumber() {
+            const number = document.getElementById('payment_number_display').innerText;
+            navigator.clipboard.writeText(number).then(() => {
+                alert('Payment number copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy. Number: ' + number);
+            });
+        }
+
+        async function submitBooking() {
+            const qty = document.getElementById('b_qty').value;
+            const total = document.getElementById('b_total').innerText;
+            const transactionId = document.getElementById('transaction_id').value.trim();
+            const paymentPhone = document.getElementById('payment_phone').value.trim();
+            const selectedMethod = document.getElementById('selected_payment_method').value;
+
+            // Validation
+            if (!selectedMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+
+            if (!transactionId) {
+                alert('Please enter your Transaction ID');
+                return;
+            }
+
+            if (!paymentPhone) {
+                alert('Please enter your payment phone number');
+                return;
+            }
+
+            // Validate phone number format (basic Bangladesh number validation)
+            const phoneRegex = /^01[3-9]\d{8}$/;
+            if (!phoneRegex.test(paymentPhone)) {
+                alert('Please enter a valid Bangladesh mobile number (e.g., 01712345678)');
+                return;
+            }
+
+            const res = await fetch(API + '/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: user.id,
+                    eventId: currentEvent.id,
+                    qty,
+                    total,
+                    gateway: selectedMethod,
+                    transactionId: transactionId,
+                    paymentPhone: paymentPhone,
+                    email: user.email,
+                    phone: user.phone
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("✅ Booking Submitted Successfully!\n\nPlease wait for organiser approval. You will receive a confirmation email once your payment is verified.");
+                document.getElementById('bookModal').style.display = 'none';
+                loadEvents();
+            } else {
+                alert('❌ Booking Failed: ' + (data.error || 'Unknown error'));
+            }
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        async function loadAdminList() {
+            try {
+                const res = await fetch(API + '/admins/public');
+                const admins = await res.json();
+                const grid = document.getElementById('admin-grid');
+
+                grid.innerHTML = admins.map(a => `
+                    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; text-align: center; transition: transform 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 220px; margin: 0 auto;">
+                        <div style="width: 100%; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; background: #1e293b; border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="${a.profile_pic || 'https://via.placeholder.com/200'}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="width: 100%;">
+                            <h4 style="color: white; margin: 0; font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.full_name}</h4>
+                            <p style="color: #10b981; font-size: 0.85rem; margin: 3px 0 8px 0; font-weight: 600;">Ayojon Admin</p>
+                            
+                            <!-- Toggleable Details -->
+                            <div id="details-${a.id}" style="display:none; width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 0.8rem; text-align: left; animation: fadeIn 0.3s ease; margin-bottom: 12px; border-left: 2px solid #10b981;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                                    <i class="fas fa-envelope" style="color:#10b981; font-size:0.8rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.email}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i class="fas fa-phone" style="color:#10b981; font-size:0.8rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem;">${a.phone}</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="font-size:0.7rem; padding:8px 15px; border-radius:50px; width: 100%;" 
+                                onclick="toggleAdminDetails(${a.id}, this)">See Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                alert("Error loading admins");
+            }
+        }
+
+        function toggleAdminDetails(id, btn) {
+            const div = document.getElementById(`details-${id}`);
+            const isHidden = div.style.display === 'none';
+            div.style.display = isHidden ? 'block' : 'none';
+            btn.innerText = isHidden ? 'Hide Details' : 'See Details';
+
+            // Auto-scroll if content expands
+            if (isHidden) {
+                div.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        loadEvents();
+    </script>
+</body>
+
+</html>

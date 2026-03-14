@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Ayojon</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo-link">
+            <img src="images/logo.png" alt="Ayojon Logo" class="logo-img">
+        </a>
+        <ul>
+            <li onclick="showSection('home')">Dashboard</li>
+            <li onclick="showSection('profile')">My Profile</li>
+            <li onclick="showSection('admins')">Admin Panel</li>
+            <li onclick="logout()">Logout</li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <div id="home-sec">
+            <h2 style="margin-bottom:20px; color:#ffffff;">Organizer Applications</h2>
+            <div class="table-container">
+                <table id="org-table">
+                    <thead>
+                        <tr>
+                            <th>Organizer name</th>
+                            <th>Email</th>
+                            <th>Organization name</th>
+                            <th>About organization</th>
+                            <th>status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" style="text-align:center;">No organizers found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="profile-sec" class="hidden">
+            <h2 style="text-align:center; margin-bottom:20px;">My Profile</h2>
+            <div class="profile-card">
+                <div id="admin-profile-content">
+                </div>
+            </div>
+        </div>
+
+        <div id="admins-sec" class="container hidden">
+            <h1 style="text-align: center; margin-bottom: 30px; color: #10b981;"><i class="fas fa-user-shield"></i>
+                Ayojon Admins</h1>
+            <div id="admin-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 10px; align-items: start;">
+                <!-- Cards populated by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content"
+            style="max-width: 900px; padding: 0; background: #0f172a; border-color: rgba(16, 185, 129, 0.4);">
+            <div
+                style="background: var(--primary-green); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0;">
+                <h3 style="margin: 0; color: white; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-id-card"></i> Complete Organizer Profile
+                </h3>
+                <span class="close" onclick="closeModal()" style="position: static; color: white;">&times;</span>
+            </div>
+
+            <div style="padding: 30px; max-height: 85vh; overflow-y: auto;">
+
+                <!-- Main Header: Photo & Identity -->
+                <div
+                    style="display: flex; align-items: center; gap: 30px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; gap: 30px;">
+                        <div style="text-align: center;">
+                            <div class="profile-pic-container" style="width: 100px; height: 100px; margin-bottom: 8px;">
+                                <img id="d-org-logo" src="https://via.placeholder.com/100" class="profile-pic-lg"
+                                    style="width: 100px; height: 100px; border-color: var(--primary-green);">
+                            </div>
+                            <span
+                                style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Org
+                                Logo</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="profile-pic-container" style="width: 100px; height: 100px; margin-bottom: 8px;">
+                                <img id="d-profile-pic" src="https://via.placeholder.com/100" class="profile-pic-lg"
+                                    style="width: 100px; height: 100px; border-color: #334155;">
+                            </div>
+                            <span
+                                style="font-size: 0.75rem; color: #cbd5e1; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organizer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid"
+                    style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 0;">
+
+                    <!-- Section A: Organizer Details -->
+                    <div class="profile-card"
+                        style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                        <h4
+                            style="color: #60a5fa; margin-bottom: 20px; border-bottom: 2px solid rgba(96,165,250,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-user-tie"></i> Organizer Details
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Full
+                                    Name</label>
+                                <div id="d-fullname-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Email
+                                    Address</label>
+                                <div id="d-email-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Phone
+                                    Number</label>
+                                <div id="d-phone-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section B: Business Information -->
+                    <div class="profile-card"
+                        style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                        <h4
+                            style="color: #a855f7; margin-bottom: 20px; border-bottom: 2px solid rgba(168,85,247,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-briefcase"></i> Business Information
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization
+                                    Name</label>
+                                <div id="d-org-name-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization
+                                    Type</label>
+                                <div id="d-org-type-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Organization
+                                    Email</label>
+                                <div id="d-org-email-v"
+                                    style="font-weight: 600; color: #f8fafc; font-size: 1rem; word-break: break-all;">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Official
+                                    Address</label>
+                                <div id="d-address-v"
+                                    style="font-weight: 600; color: #f8fafc; font-size: 0.9rem; line-height: 1.4;">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Website
+                                    URL</label>
+                                <a id="d-web-v" target="_blank"
+                                    style="font-weight: 600; color: #3b82f6; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem;"></a>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Social
+                                    Media Link</label>
+                                <a id="d-social-v" target="_blank"
+                                    style="font-weight: 600; color: #ec4899; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem;"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section C: Verification Details -->
+                    <div class="profile-card"
+                        style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                        <h4
+                            style="color: #f59e0b; margin-bottom: 20px; border-bottom: 2px solid rgba(245,158,11,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-file-contract"></i> Verification Details
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Trade
+                                    License Number</label>
+                                <div id="d-license-v"
+                                    style="font-weight: 700; color: #f8fafc; font-size: 1.1rem; letter-spacing: 1px;">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Tax
+                                    Identification Number (TIN)</label>
+                                <div id="d-tax-v"
+                                    style="font-weight: 700; color: #f8fafc; font-size: 1.1rem; letter-spacing: 1px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section D: Payment Information -->
+                    <div class="profile-card"
+                        style="padding: 20px; margin: 0; background: rgba(255,255,255,0.02); height: 100%;">
+                        <h4
+                            style="color: #10b981; margin-bottom: 20px; border-bottom: 2px solid rgba(16,185,129,0.3); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-money-bill-wave"></i> Payment Information
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">bKash
+                                    Number</label>
+                                <div id="d-bkash-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Nagad
+                                    Number</label>
+                                <div id="d-nagad-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Upay
+                                    Number</label>
+                                <div id="d-upay-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                            <div>
+                                <label
+                                    style="margin: 0; font-size: 0.75rem; color: #10b981; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Rocket
+                                    Number</label>
+                                <div id="d-rocket-v" style="font-weight: 600; color: #f8fafc; font-size: 1rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000';
+
+        // 1. Auth Check
+        const adminData = localStorage.getItem('user');
+        let admin = null;
+        try { admin = JSON.parse(adminData); } catch (e) { }
+
+        if (!admin || admin.role !== 'admin') {
+            window.location.href = 'index.html';
+        }
+
+        // 2. Navigation Logic
+        function showSection(section) {
+            document.getElementById('home-sec').classList.toggle('hidden', section !== 'home');
+            document.getElementById('profile-sec').classList.toggle('hidden', section !== 'profile');
+            document.getElementById('admins-sec').classList.toggle('hidden', section !== 'admins');
+
+            if (section === 'profile') loadAdminProfile();
+            if (section === 'home') loadOrganizers();
+            if (section === 'admins') loadAdminList();
+        }
+
+        // 3. Load Admin Profile
+        function loadAdminProfile() {
+            const pic = (admin.profile_pic && admin.profile_pic.startsWith('data:image'))
+                ? admin.profile_pic
+                : 'https://via.placeholder.com/150';
+            document.getElementById('admin-profile-content').innerHTML = `
+                <!-- Centered Profile Image with Camera Overlay -->
+                <div style="text-align: center; margin-bottom: 25px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="profile-pic-container">
+                        <img id="admin_pic_display" src="${pic}" class="profile-pic-lg" alt="Admin Profile Picture" onerror="this.src='https://via.placeholder.com/150'">
+                        <div class="camera-overlay">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" accept="image/*" onchange="uploadAdminProfilePic(this)" style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                        </div>
+                    </div>
+                    <h3 style="color: #ffffff; margin: 10px 0 5px 0; font-size: 1.5rem;">${admin.full_name}</h3>
+                    <p style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">Max size: 2MB</p>
+                </div>
+
+                <!-- Details Grid -->
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Full Name</strong>
+                        <span>${admin.full_name}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Email Address</strong>
+                        <span>${admin.email}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Phone Number</strong>
+                        <span>${admin.phone || 'N/A'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Role</strong>
+                        <span>Administrator</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Upload Admin Profile Picture
+        function uploadAdminProfilePic(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Size check (Max 2MB)
+            const maxSize = 2 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert("File is too big! Please select an image under 2MB.");
+                input.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function () {
+                const base64 = reader.result;
+
+                // Instant preview
+                document.getElementById('admin_pic_display').src = base64;
+
+                // Upload to server
+                try {
+                    const res = await fetch(API + '/update-pic', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: admin.id, role: 'admin', imageBase64: base64 })
+                    });
+
+                    if (!res.ok) {
+                        throw new Error(`Server status: ${res.status}`);
+                    }
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        alert('Profile Picture Updated!');
+                        admin.profile_pic = base64;
+                        localStorage.setItem('user', JSON.stringify(admin));
+                    } else {
+                        alert('Server Error: ' + (data.error || 'Unknown Error'));
+                    }
+                } catch (err) {
+                    console.error("Upload Error:", err);
+                    alert("Connection failed! Make sure your server is running.");
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // 4. Load Organizers Table
+        let organizersCache = []; // Store data here to view details later
+
+        async function loadOrganizers() {
+            try {
+                const res = await fetch(API + '/admin/organizers');
+                organizersCache = await res.json();
+
+                const tbody = document.querySelector('#org-table tbody');
+                tbody.innerHTML = '';
+
+                if (organizersCache.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No organizers found.</td></tr>';
+                    return;
+                }
+
+                organizersCache.forEach((org, index) => {
+                    const statusBadge = org.is_approved
+                        ? '<span class="badge badge-active">Active</span>'
+                        : '<span class="badge badge-pending">Pending</span>';
+
+                    const actionButtons = org.is_approved
+                        ? '<span style="color:#64748b;">—</span>'
+                        : `
+                            <div style="display:flex; gap:5px; flex-direction:column;">
+                                <button class="btn btn-primary" style="font-size:0.75rem; padding:4px 8px; border-radius: 50px;" onclick="approveOrg(${org.id})">Approve</button>
+                                <button class="btn btn-danger" style="font-size:0.75rem; padding:4px 8px; background:#991b1b; border:none; border-radius: 50px;" onclick="rejectOrg(${org.id})">Reject</button>
+                            </div>
+                        `;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <img src="${org.org_logo || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                <strong>${org.full_name}</strong>
+                            </div>
+                        </td>
+                        <td>${org.email}</td>
+                        <td>${org.org_name || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-primary" style="font-size:0.75rem; padding:4px 8px; border-radius: 50px;" onclick="viewDetails(${index})">See Details</button>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>${actionButtons}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // 5. View Details Function
+        function viewDetails(index) {
+            const org = organizersCache[index];
+            if (!org) return;
+
+            // Images
+            document.getElementById('d-org-logo').src = org.org_logo || 'https://via.placeholder.com/100';
+            document.getElementById('d-profile-pic').src = org.profile_pic || 'https://via.placeholder.com/100';
+
+            // Section 1: Organizer Details
+            document.getElementById('d-fullname-v').innerText = org.full_name;
+            document.getElementById('d-email-v').innerText = org.email;
+            document.getElementById('d-phone-v').innerText = org.phone || 'N/A';
+
+            // Section 2: Business Information
+            document.getElementById('d-org-name-v').innerText = org.org_name || 'N/A';
+            document.getElementById('d-org-type-v').innerText = org.org_type || 'General Business';
+            document.getElementById('d-org-email-v').innerText = org.org_email || 'N/A';
+            document.getElementById('d-address-v').innerText = org.official_address || 'N/A';
+
+            const web = document.getElementById('d-web-v');
+            web.innerText = org.website || 'N/A';
+            web.href = org.website && org.website.startsWith('http') ? org.website : '#';
+
+            const social = document.getElementById('d-social-v');
+            social.innerText = org.social_link || 'N/A';
+            social.href = org.social_link && org.social_link.startsWith('http') ? org.social_link : '#';
+
+            // Section 3: Verification Details
+            document.getElementById('d-license-v').innerText = org.license_number || 'N/A';
+            document.getElementById('d-tax-v').innerText = org.tax_number || 'N/A';
+
+            // Section 4: Payment Information
+            document.getElementById('d-bkash-v').innerText = org.bkash_number || 'N/A';
+            document.getElementById('d-nagad-v').innerText = org.nagad_number || 'N/A';
+            document.getElementById('d-upay-v').innerText = org.upay_number || 'N/A';
+            document.getElementById('d-rocket-v').innerText = org.rocket_number || 'N/A';
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // 6. Approve Logic
+        async function approveOrg(id) {
+            if (!confirm("Are you sure you want to approve this organizer?")) return;
+
+            try {
+                const res = await fetch(API + '/admin/approve-organizer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert("Organizer Approved!");
+                    closeModal();
+                    loadOrganizers(); // Refresh table
+                } else {
+                    alert("Failed to approve.");
+                }
+            } catch (e) {
+                alert("Server error.");
+            }
+        }
+
+        async function rejectOrg(id) {
+            if (!confirm("Are you sure you want to reject this organizer? This will permanently delete their application.")) return;
+
+            try {
+                const res = await fetch(API + '/admin/reject-organizer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert("Organizer Rejected & Deleted.");
+                    closeModal();
+                    loadOrganizers(); // Refresh table
+                } else {
+                    alert("Failed to reject.");
+                }
+            } catch (e) {
+                alert("Server error.");
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        async function loadAdminList() {
+            try {
+                const res = await fetch(API + '/admins/public');
+                const admins = await res.json();
+                const grid = document.getElementById('admin-grid');
+
+                grid.innerHTML = admins.map(a => `
+                    <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; text-align: center; transition: transform 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 220px; margin: 0 auto;">
+                        <div style="width: 100%; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; background: #1e293b; border: 1px solid rgba(255,255,255,0.05);">
+                            <img src="${a.profile_pic || 'https://via.placeholder.com/200'}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="width: 100%;">
+                            <h4 style="color: white; margin: 0; font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.full_name}</h4>
+                            <p style="color: #10b981; font-size: 0.85rem; margin: 3px 0 8px 0; font-weight: 600;">Ayojon Admin</p>
+                            
+                            <!-- Toggleable Details -->
+                            <div id="details-${a.id}" style="display:none; width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 0.8rem; text-align: left; animation: fadeIn 0.3s ease; margin-bottom: 12px; border-left: 2px solid #10b981;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                                    <i class="fas fa-envelope" style="color:#10b981; font-size:0.8rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.email}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i class="fas fa-phone" style="color:#10b981; font-size:0.8rem;"></i>
+                                    <span style="color: #f8fafc; font-size: 0.75rem;">${a.phone}</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="font-size:0.7rem; padding:8px 15px; border-radius:50px; width: 100%;" 
+                                onclick="toggleAdminDetails(${a.id}, this)">See Details</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                alert("Error loading admins");
+            }
+        }
+
+        function toggleAdminDetails(id, btn) {
+            const div = document.getElementById(`details-${id}`);
+            const isHidden = div.style.display === 'none';
+            div.style.display = isHidden ? 'block' : 'none';
+            btn.innerText = isHidden ? 'Hide Details' : 'See Details';
+
+            // Auto-scroll if content expands
+            if (isHidden) {
+                div.parentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Initialize
+        loadOrganizers();
+    </script>
+</body>
+
+</html>
